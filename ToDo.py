@@ -51,6 +51,49 @@ def delete_task(c, conn, task_id):
     conn.commit()
     print(f"Task {task_id} deleted successfully.")
 
+# Main function to run the application
+def main():
+    conn, c = create_connection()
+    create_table(c, conn)
+    
+    while True:
+        print("\nActivity 2.2 - To-Do App Menu")
+        print("1. Add task")
+        print("2. View tasks")
+        print("3. Mark task as completed")
+        print("4. Update task details")
+        print("5. Delete task")
+        print("6. Exit")
+
+        choice = input("Enter your choice: ")
+
+        if choice == '1':
+            task = input("Enter task description: ")
+            add_task(c, conn, task)
+        elif choice == '2':
+            tasks = view_tasks(c)
+            if tasks:
+                for task in tasks:
+                    print(f"ID: {task[0]}, Task: {task[1]}, Status: {task[2]}")
+            else:
+                print("No tasks found.")
+        elif choice == '3':
+            task_id = int(input("Enter task ID to mark as completed: "))
+            mark_task_completed(c, conn, task_id)
+        elif choice == '4':
+            task_id = int(input("Enter task ID to update: "))
+            new_task = input("Enter new task description: ")
+            update_task(c, conn, task_id, new_task)
+        elif choice == '5':
+            task_id = int(input("Enter task ID to delete: "))
+            delete_task(c, conn, task_id)
+        elif choice == '6':
+            print("Thank you for using the Activity 2.2 - To-Do App")
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+    conn.close()
 # Unit tests for the to-do list application
 class TestToDoApp(unittest.TestCase):
 
@@ -99,5 +142,5 @@ class TestToDoApp(unittest.TestCase):
         self.assertEqual(len(tasks), 0)
     
 if __name__ == '__main__':
-    # Run the tests
     unittest.main(exit=False)
+    main()
