@@ -32,6 +32,12 @@ def view_tasks(c):
         return tasks
     else:
         return []
+    
+# Function to mark a task as completed
+def mark_task_completed(c, conn, task_id):
+    c.execute('UPDATE tasks SET status = ? WHERE id = ?', ('completed', task_id))
+    conn.commit()
+    print("Task marked as completed.")
 
 # Unit tests for the to-do list application
 class TestToDoApp(unittest.TestCase):
@@ -55,6 +61,14 @@ class TestToDoApp(unittest.TestCase):
         add_task(self.c, self.conn, "Test Task 2")
         tasks = view_tasks(self.c)
         self.assertEqual(len(tasks), 2)
+        
+    def test_mark_task_completed(self):
+        add_task(self.c, self.conn, "Test Task 1")
+        tasks = view_tasks(self.c)
+        task_id = tasks[0][0]
+        mark_task_completed(self.c, self.conn, task_id)
+        tasks = view_tasks(self.c)
+        self.assertEqual(tasks[0][2], "completed")
 
 if __name__ == '__main__':
     # Run the tests
