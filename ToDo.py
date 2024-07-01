@@ -1,14 +1,12 @@
 import unittest
 import sqlite3
 
-# Function to create a connection to the SQLite database
-def create_connection(db_file=':memory:'):
+def create_connection(db_file=':memory:'):      # Function to create a connection to the SQLite database
     conn = sqlite3.connect(db_file)
     c = conn.cursor()
     return conn, c
 
-# Function to create the tasks table
-def create_table(c, conn):
+def create_table(c, conn):                      # Function to create the tasks table
     c.execute('''
     CREATE TABLE IF NOT EXISTS tasks (
         id INTEGER PRIMARY KEY,
@@ -18,8 +16,7 @@ def create_table(c, conn):
     ''')
     conn.commit()
 
-# Function to add a task
-def add_task(c, conn, task):
+def add_task(c, conn, task):                    # Function to add a task
     c.execute('INSERT INTO tasks (task, status) VALUES (?, ?)', (task, 'pending'))
     conn.commit()
     print("Task added successfully.")
@@ -33,26 +30,22 @@ def view_tasks(c):
     else:
         return []
     
-# Function to mark a task as completed
-def mark_task_completed(c, conn, task_id):
+def mark_task_completed(c, conn, task_id):      # Function to mark a task as completed
     c.execute('UPDATE tasks SET status = ? WHERE id = ?', ('completed', task_id))
     conn.commit()
     print(f"Task {task_id} marked as completed.")
     
-# Function to update a task
-def update_task(c, conn, task_id, new_task):
+def update_task(c, conn, task_id, new_task):    # Function to update a task
     c.execute('UPDATE tasks SET task = ? WHERE id = ?', (new_task, task_id))
     conn.commit()
     print(f"Task {task_id} updated successfully.")
     
-# Function to delete a task
-def delete_task(c, conn, task_id):
+def delete_task(c, conn, task_id):              # Function to delete a task
     c.execute('DELETE FROM tasks WHERE id = ?', (task_id,))
     conn.commit()
     print(f"Task {task_id} deleted successfully.")
 
-# Main function to run the application
-def main():
+def main():                                     # Main function to run the application (while loop)
     conn, c = create_connection()
     create_table(c, conn)
     
@@ -88,13 +81,12 @@ def main():
             task_id = int(input("Enter task ID to delete: "))
             delete_task(c, conn, task_id)
         elif choice == '6':
-            print("Thank you for using the Activity 2.2 - To-Do App")
+            print("\nThank you for using the Activity 2.2 - To-Do App\n")
             break
         else:
             print("Invalid choice. Please try again.")
 
     conn.close()
-# Unit tests for the to-do list application
 class TestToDoApp(unittest.TestCase):
 
     def setUp(self):
@@ -104,20 +96,20 @@ class TestToDoApp(unittest.TestCase):
     def tearDown(self):
         self.conn.close()
 
-    def test_add_task(self):
+    def test_add_task(self):                               # Add task test
         add_task(self.c, self.conn, "Test Task 1")
         tasks = view_tasks(self.c)
         self.assertEqual(len(tasks), 1)
         self.assertEqual(tasks[0][1], "Test Task 1")
         self.assertEqual(tasks[0][2], "pending")
 
-    def test_view_tasks(self):
+    def test_view_tasks(self):                              # view task test
         add_task(self.c, self.conn, "Test Task 1")
         add_task(self.c, self.conn, "Test Task 2")
         tasks = view_tasks(self.c)
         self.assertEqual(len(tasks), 2)
         
-    def test_mark_task_completed(self):
+    def test_mark_task_completed(self):                     # Task marked as completed test
         add_task(self.c, self.conn, "Test Task 1")
         tasks = view_tasks(self.c)
         task_id = tasks[0][0]
@@ -125,7 +117,7 @@ class TestToDoApp(unittest.TestCase):
         tasks = view_tasks(self.c)
         self.assertEqual(tasks[0][2], "completed")
 
-    def test_update_task(self):
+    def test_update_task(self):                             # Update task test
         add_task(self.c, self.conn, "Test Task 1")
         tasks = view_tasks(self.c)
         task_id = tasks[0][0]
@@ -133,7 +125,7 @@ class TestToDoApp(unittest.TestCase):
         tasks = view_tasks(self.c)
         self.assertEqual(tasks[0][1], "Updated Task 1")
         
-    def test_delete_task(self):
+    def test_delete_task(self):                             # Delete task test
         add_task(self.c, self.conn, "Test Task 1")
         tasks = view_tasks(self.c)
         task_id = tasks[0][0]
