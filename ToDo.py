@@ -44,6 +44,12 @@ def update_task(c, conn, task_id, new_task):
     c.execute('UPDATE tasks SET task = ? WHERE id = ?', (new_task, task_id))
     conn.commit()
     print(f"Task {task_id} updated successfully.")
+    
+# Function to delete a task
+def delete_task(c, conn, task_id):
+    c.execute('DELETE FROM tasks WHERE id = ?', (task_id,))
+    conn.commit()
+    print(f"Task {task_id} deleted successfully.")
 
 # Unit tests for the to-do list application
 class TestToDoApp(unittest.TestCase):
@@ -84,6 +90,14 @@ class TestToDoApp(unittest.TestCase):
         tasks = view_tasks(self.c)
         self.assertEqual(tasks[0][1], "Updated Task 1")
         
+    def test_delete_task(self):
+        add_task(self.c, self.conn, "Test Task 1")
+        tasks = view_tasks(self.c)
+        task_id = tasks[0][0]
+        delete_task(self.c, self.conn, task_id)
+        tasks = view_tasks(self.c)
+        self.assertEqual(len(tasks), 0)
+    
 if __name__ == '__main__':
     # Run the tests
     unittest.main(exit=False)
